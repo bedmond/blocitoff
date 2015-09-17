@@ -1,18 +1,22 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-xs-8 app-content">
-    </br>
-    <h4>CURRENT TASKS<h4>
-      <div class="form-group">
-      <input ng-model="task" id="taskInput" class="form-control" type="text" placeholder="Enter task..."></input>
-      </div>
-      <button class="btn btn-default pull-right" ng-click="addTask()">Add Task</button>
-    <table class="table table-striped">
-    </br>
-    </br>
-      <tr ng-repeat="task in tasks | orderBy: 'created_at': true">
+    <div class="col-md-6 col-md-offset-3 app-content">
       </br>
-        <td>{{ task.name }} <a class="btn btn-default pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">x</a></td>
-      </tr>
-    </table>
+      <h4>CURRENT TASKS<h4>
+        <div class="form-group">
+        <input ng-model="task" id="taskInput" class="form-control" type="text" placeholder="Enter task..."></input>
+        </div>
+        <button class="btn btn-info pull-right" ng-click="addTask()">Add Task</button>
+      <table class="table">
+      </br>
+      </br>
+        <tr ng-repeat="task in tasks | orderBy: 'created_at': true">
+        </br>
+          <td>{{ task.name }} <a class="btn btn-info pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">X</a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
 

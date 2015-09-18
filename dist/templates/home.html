@@ -7,10 +7,14 @@
         <input ng-model="task" id="taskInput" class="form-control" type="text" placeholder="Enter task..."></input>
         </div>
         <button class="btn btn-info pull-right" ng-click="addTask()">Add Task</button>
+        <!--need to have Add Task button also start the countdown-->
       <table class="table">
       </br>
       </br>
         <tr ng-repeat="task in tasks | orderBy: 'created_at': true">
+        <!--Attempt to hid task when countdown is 0-->
+        <div ng-hide="taskCountDown(taskTime)">
+        </div>
         </br>
           <td>{{ task.name }} <a class="btn btn-info pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">X</a></td>
         </tr>

@@ -10,43 +10,51 @@ blocitoff.config(['$stateProvider', '$locationProvider', function($stateProvider
   });
 }]);
 
-blocitoff.controller('Home.controller', ['$scope', '$interval', '$firebaseArray', function($scope, $interval, $firebaseArray) {
+//create Firebase constant
+blocitoff.constant('FIREBASE_URL', 'https://flickering-fire-4278.firebaseio.com');
 
-  $scope.taskButton = "Add Task";
-  $scope.taskTime = 5 * 60;
+blocitoff.controller('Home.controller', ['$scope', '$firebaseArray', 'FIREBASE_URL', function($scope, $firebaseArray, FIREBASE_URL) {
 
-  $scope.taskCountDown = function() {
-    $scope.taskTime -= 100;
-    $scope.taskButton = "Add Task";
-    if ($scope.taskTime == 0) {
-      $scope.stop();
-      return true;
-    } else {
-      return false;
-      console.log($scope.taskTime);
-    }
-  };
-
-  $scope.start = function() {
-    $scope.timerSet = $interval($scope.taskCountDown, 1000);
-  }
-
-  $scope.stop = function() {
-    $interval.cancel($scope.timerSet);
-  }
-
-  var ref = new Firebase("https://flickering-fire-4278.firebaseio.com");
+  //retrieve stored tasks
+  var ref = new Firebase(FIREBASE_URL);
 
   $scope.tasks = $firebaseArray(ref);
 
-  $scope.addTask = function() {
+  //update the completed task
+  $scope.changeStatus = function(task) {
+
+    //update the task - use this to hide/show on complete
     var name = $scope.task;
     $scope.tasks.$add({
       name: $scope.task,
-      created_at: Firebase.ServerValue.TIMESTAMP
+      completed: !task.completed
+    });   
+  }
+
+  //add a task
+  $scope.addTask = function() {
+
+    //create unique id
+    var timestamp = new Date().getTime() //maybe use new Date().valueOf()
+
+    var name = $scope.task;
+    $scope.tasks.$add({
+      id: timestamp,
+      name: $scope.task,
+      completed: false
     });
 
     $scope.task = "";
   };
+
+  //countdown for expired task, still not working
+  $scope.taskCountDown = function(task) {
+
+    var completedTaskDate = $scope.task - 150; //shorter test time
+    if ($scope.task < completedTaskDate)
+      return true; //hides task
+    else
+      return false; //shows task
+  }
 
 }]);

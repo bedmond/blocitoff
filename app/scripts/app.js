@@ -15,46 +15,46 @@ blocitoff.constant('FIREBASE_URL', 'https://flickering-fire-4278.firebaseio.com'
 
 blocitoff.controller('Home.controller', ['$scope', '$firebaseArray', 'FIREBASE_URL', function($scope, $firebaseArray, FIREBASE_URL) {
 
+  //var name = $scope.tasks.$getRecord(task);
+    //var timestamp = new Date().getTime();
+    //console.log(timestamp);
+    //if(task.conditon == "active" && (timestamp - task.created_at) > 300) { //change to 604800000
+      //task.condition = "expired";
+      //$scope.tasks.$save(task);
+    //}
+
   //retrieve stored tasks
   var ref = new Firebase(FIREBASE_URL);
 
   $scope.tasks = $firebaseArray(ref);
 
-  //update the completed task
-  $scope.changeStatus = function(task) {
-
-    //update the task - use this to hide/show on complete
-    var name = $scope.task;
-    $scope.tasks.$add({
-      name: $scope.task,
-      completed: !task.completed
-    });   
-  }
-
   //add a task
   $scope.addTask = function() {
-
-    //create unique id
-    var timestamp = new Date().getTime() //maybe use new Date().valueOf()
-
-    var name = $scope.task;
+    var name = $scope.task; 
     $scope.tasks.$add({
-      id: timestamp,
       name: $scope.task,
-      completed: false
+      condition: "active",
+      created_at: Firebase.ServerValue.TIMESTAMP
     });
 
     $scope.task = "";
   };
 
-  //countdown for expired task, still not working
-  $scope.taskCountDown = function(task) {
+  //completed task
+  $scope.completeTask = function(task) {
+    task.condition = "complete";
+    $scope.tasks.$save(task);
+  };
 
-    var completedTaskDate = $scope.task - 150; //shorter test time
-    if ($scope.task < completedTaskDate)
-      return true; //hides task
-    else
-      return false; //shows task
-  }
+  //expired task
+  //$scope.expiredTask = function(task) {
+    //var name = $scope.tasks.$getRecord(task);
+    //var timestamp = new Date().getTime();
+    //console.log(timestamp);
+    //if(task.conditon == "active" && (timestamp - task.created_at) > 300) { //change to 604800000
+      //task.condition = "expired";
+      //$scope.tasks.$save(task);
+    //}
+  //};
 
 }]);

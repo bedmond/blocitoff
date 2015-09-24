@@ -10,10 +10,12 @@
       <table class="table">
       </br>
       </br>
-        <tr ng-repeat="task in tasks" ng-hide="taskCountDown(task.date)"><!--hides timed out task-->
+        <tr ng-repeat="task in tasks" ng-hide="task.condition == 'complete'">
+        <div>
         </br>
-          <td>{{ task.name }} <a class="btn btn-danger pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">DELETE</a> <a class="btn btn-warning btn-xs" ng-click="changeStatus(task)">COMPLETE</a> <!--COMPLETE button needs functionality and both need styling-->
-        </a></td>
+          <td>{{ task.name }} <a class="btn btn-danger pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">DELETE</a><a class="btn btn-danger pull-right btn-xs" href="#" role="button" ng-click="completeTask(task)">Complete</a>
+        </td>
+        </div>
       </div>
         </tr>
       </table>

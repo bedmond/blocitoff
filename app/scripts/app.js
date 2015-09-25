@@ -15,14 +15,6 @@ blocitoff.constant('FIREBASE_URL', 'https://flickering-fire-4278.firebaseio.com'
 
 blocitoff.controller('Home.controller', ['$scope', '$firebaseArray', 'FIREBASE_URL', function($scope, $firebaseArray, FIREBASE_URL) {
 
-  //var name = $scope.tasks.$getRecord(task);
-    //var timestamp = new Date().getTime();
-    //console.log(timestamp);
-    //if(task.conditon == "active" && (timestamp - task.created_at) > 300) { //change to 604800000
-      //task.condition = "expired";
-      //$scope.tasks.$save(task);
-    //}
-
   //retrieve stored tasks
   var ref = new Firebase(FIREBASE_URL);
 
@@ -46,15 +38,18 @@ blocitoff.controller('Home.controller', ['$scope', '$firebaseArray', 'FIREBASE_U
     $scope.tasks.$save(task);
   };
 
-  //expired task
-  //$scope.expiredTask = function(task) {
-    //var name = $scope.tasks.$getRecord(task);
-    //var timestamp = new Date().getTime();
-    //console.log(timestamp);
-    //if(task.conditon == "active" && (timestamp - task.created_at) > 300) { //change to 604800000
-      //task.condition = "expired";
-      //$scope.tasks.$save(task);
-    //}
-  //};
+  
+  //expired task called with ngInit
+  $scope.expiredTask = function(task) {
+    var name = $scope.tasks.$getRecord(task);
+    var timestamp = new Date().getTime();
+    var timeNow = task.created_at;
 
+    //change to 604800000 after testing
+    if(task.condition == "active" && (timestamp - timeNow) >= 60) {
+      task.condition = "complete";
+      $scope.tasks.$save(task);
+    }
+  };
 }]);
+

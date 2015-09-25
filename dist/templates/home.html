@@ -10,7 +10,8 @@
       <table class="table">
       </br>
       </br>
-        <tr ng-repeat="task in tasks" ng-hide="task.condition == 'complete'">
+        <!--used ngInit to call expiredTask()-->
+        <tr ng-repeat="task in tasks" ng-show="task.condition == 'active'" ng-init="expiredTask(task)">
         <div>
         </br>
           <td>{{ task.name }} <a class="btn btn-danger pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">DELETE</a><a class="btn btn-danger pull-right btn-xs" href="#" role="button" ng-click="completeTask(task)">Complete</a>

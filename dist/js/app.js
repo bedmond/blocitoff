@@ -8,6 +8,13 @@ blocitoff.config(['$stateProvider', '$locationProvider', function($stateProvider
     controller: 'Home.controller',
     templateUrl: '/templates/home.html'
   });
+
+  $stateProvider.state('complete', {
+    url: '/complete',
+    controller: 'Complete.controller',
+    templateUrl: '/templates/complete.html'
+  });
+
 }]);
 
 //create Firebase constant
@@ -46,10 +53,19 @@ blocitoff.controller('Home.controller', ['$scope', '$firebaseArray', 'FIREBASE_U
     var timeNow = task.created_at;
 
     //change to 604800000 after testing
-    if(task.condition == "active" && (timestamp - timeNow) >= 60) {
+    if(task.condition == "active" && (timestamp - timeNow) >= 604800000) {
       task.condition = "complete";
       $scope.tasks.$save(task);
     }
   };
+}]);
+
+blocitoff.controller('Complete.controller', ['$scope', '$firebaseArray', 'FIREBASE_URL', function($scope, $firebaseArray, FIREBASE_URL) {
+
+  //retrieve stored tasks
+  var ref = new Firebase(FIREBASE_URL);
+
+  $scope.tasks = $firebaseArray(ref);
+
 }]);
 

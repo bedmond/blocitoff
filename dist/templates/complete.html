@@ -9,7 +9,7 @@
       </br>
       </br>
         <!--used ngInit to call expiredTask()-->
-        <tr ng-repeat="task in tasks" ng-show="task.condition == 'completed'" ng-init="expiredTask(task)">
+        <tr ng-repeat="task in tasks" ng-show="task.condition == 'complete'">
         </br>
           <td>{{ task.name }} <a class="btn btn-danger pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">DELETE</a>
         </td>

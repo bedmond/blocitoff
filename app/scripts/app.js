@@ -1,4 +1,4 @@
-blocitoff = angular.module('blocitoff', ['ui.router', 'firebase']);
+blocitoff = angular.module('blocitoff', ['ui.router', 'firebase', 'ui.sortable']);
 
 blocitoff.config(['$stateProvider', '$locationProvider', function($stateProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
@@ -33,11 +33,23 @@ blocitoff.controller('Home.controller', ['$scope', '$firebaseArray', 'FIREBASE_U
     $scope.tasks.$add({
       name: $scope.task,
       condition: "active",
-      created_at: Firebase.ServerValue.TIMESTAMP
+      created_at: Firebase.ServerValue.TIMESTAMP,
+      priority: -1
     });
 
     $scope.task = "";
+
   };
+
+    //function to sort 
+  $scope.sortableOptions = {
+    update: function(event, ui) {
+      $scope.tasks.forEach(function(task) {
+        task.priority = $scope.tasks.indexOf(task);
+        $scope.tasks.$save(task);
+      });
+    }
+  }
 
   //completed task
   $scope.completeTask = function(task) {
@@ -53,7 +65,7 @@ blocitoff.controller('Home.controller', ['$scope', '$firebaseArray', 'FIREBASE_U
     var timeNow = task.created_at;
 
     //change to 604800000 after testing
-    if(task.condition == "active" && (timestamp - timeNow) >= 604800000) {
+    if(task.condition == "active" && (timestamp - timeNow) >= 600000) {
       task.condition = "complete";
       $scope.tasks.$save(task);
     }

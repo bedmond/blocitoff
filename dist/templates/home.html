@@ -9,16 +9,15 @@
         <button class="btn btn-info pull-right" ng-click="addTask()">Add Task</button>
       <table class="table">
       </br>
-      </br>
+    </br>
         <!--used ngInit to call expiredTask()-->
-        <tr ng-repeat="task in tasks" ng-show="task.condition == 'active'" ng-init="expiredTask(task)">
-        <div>
-        </br>
-          <td>{{ task.name }} <a class="btn btn-danger pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">DELETE</a><a class="btn btn-danger pull-right btn-xs" href="#" role="button" ng-click="completeTask(task)">Complete</a>
-        </td>
-        </div>
-      </div>
-        </tr>
+        <tbody ui-sortable="sortableOptions" ng-model="tasks">
+          <tr ng-repeat="task in tasks | orderBy: 'priority'" ng-show="task.condition == 'active'" ng-init="expiredTask(task)">
+            </br>
+            <td>{{ task.name }} <a class="btn btn-warning pull-right btn-xs" href="#" role="button" ng-click="completeTask(task)">COMPLETE</a>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>

@@ -76,7 +76,6 @@ blocitoff.controller('Home.controller', ['$scope', '$firebaseArray', 'FIREBASE_U
     var timestamp = new Date().getTime();
     var timeNow = task.created_at;
 
-    //change to 604800000 after testing
     if(task.condition == "active" && (timestamp - timeNow) >= 604800000) {
       task.condition = "complete";
       $scope.tasks.$save(task);
@@ -128,7 +127,7 @@ blocitoff.controller('Login.controller', ['$scope', '$firebaseArray', 'FIREBASE_
       if (error) {
         console.log("Login failed.", error);
       } else {
-        $scope.loggedIn = true;
+        $scope.loggedIn = true; //can use ngIf to show task/complete tasks
         console.log("Authenticated successfully with payload:", authData);
       }
     });

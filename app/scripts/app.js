@@ -1,5 +1,19 @@
 blocitoff = angular.module('blocitoff', ['ui.router', 'firebase', 'ui.sortable']);
 
+blocitoff.run(['$rootScope', '$state', function($rootScope, $state) {
+  $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+    if (error === 'AUTH_REQUIRED') {
+      $state.go('login');
+    }
+  });
+}]);
+
+blocitoff.factory('Auth', ['$firebaseAuth', 'FIREBASE_URL',
+  function($firebaseAuth, FIREBASE_URL) {
+    var ref = new Firebase(FIREBASE_URL);
+    return $firebaseAuth(ref);
+  }]);
+
 blocitoff.config(['$stateProvider', '$locationProvider', function($stateProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
 
@@ -12,13 +26,23 @@ blocitoff.config(['$stateProvider', '$locationProvider', function($stateProvider
   $stateProvider.state('login', {
     url: '/login',
     controller: 'Login.controller',
-    templateUrl: '/templates/login.html'
+    templateUrl: '/templates/login.html',
+    resolve: {
+      "currentAuth": ['Auth', function(Auth) {
+        return Auth.$waitForAuth();
+      }]
+    }
   });
 
   $stateProvider.state('home', {
     url: '/home',
     controller: 'Home.controller',
-    templateUrl: '/templates/home.html'
+    templateUrl: '/templates/home.html',
+    resolve: {
+      "currentAuth": ['Auth', function(Auth) {
+        return Auth.$requireAuth();
+      }]
+    }
   });
 
   $stateProvider.state('complete', {
@@ -32,7 +56,7 @@ blocitoff.config(['$stateProvider', '$locationProvider', function($stateProvider
 //create Firebase constant
 blocitoff.constant('FIREBASE_URL', 'https://flickering-fire-4278.firebaseio.com');
 
-blocitoff.controller('Home.controller', ['$scope', '$firebaseArray', 'FIREBASE_URL', function($scope, $firebaseArray, FIREBASE_URL) {
+blocitoff.controller('Home.controller', ['$scope', '$firebaseArray', 'FIREBASE_URL', 'currentAuth', function($scope, $firebaseArray, FIREBASE_URL, currentAuth) {
 
   //retrieve stored tasks
   var ref = new Firebase(FIREBASE_URL);
@@ -93,47 +117,63 @@ blocitoff.controller('Complete.controller', ['$scope', '$firebaseArray', 'FIREBA
 }]);
 
 //register controller
-blocitoff.controller('Register.controller', ['$scope', '$firebaseArray', 'FIREBASE_URL', function($scope, $firebaseArray, FIREBASE_URL) {
-
-  var ref = new Firebase(FIREBASE_URL);
+blocitoff.controller('Register.controller', ['$scope', '$firebaseArray', 'Auth', function($scope, $firebaseArray, Auth) {
 
   //register account
-  $scope.register = function() {
-    ref.createUser({
-      email: $scope.userData,
-      password: $scope.authData
-    }, function(error, userData) {
-      if (error) {
-        console.log("Error creating user:", error);
-      } else {
-        console.log("User account created with uid:", userData.uid);
-      }
+  $scope.createUser = function() {
+    $scope.message = null;
+    $scope.error = null;
+
+    Auth.$createUser({
+      email: $scope.email,
+      password: $scope.password
+    }).then(function(userData) {
+      console.log("User created with uid: " + userData.uid);
+    }).catch(function(error) {
+      $scope.error = error;
+      console.log("Error: ", error);
     });
   }
-
 }]);
+
 
 //login controller
-blocitoff.controller('Login.controller', ['$scope', '$firebaseArray', 'FIREBASE_URL', function($scope, $firebaseArray, FIREBASE_URL) {
+blocitoff.controller('Login.controller', ['$scope', '$firebaseArray', '$firebaseAuth', 'FIREBASE_URL', 'currentAuth', 'Auth', function($scope, $firebaseArray, $firebaseAuth, FIREBASE_URL, currentAuth, Auth) {
+
+  $scope.auth = Auth;
+
+  $scope.auth.$onAuth(function(authData) {
+    $scope.authData = authData;
+    console.log(authData);
+  });
+
+  console.log(Auth);
 
   var ref = new Firebase(FIREBASE_URL);
-  
-  //account login
+  $scope.authObj = $firebaseAuth(ref);
+
   $scope.login = function() {
-    ref.authWithPassword({
-      email: $scope.userData,
-      password: $scope.authData
-    }, function(error, authData) {
-      if (error) {
-        console.log("Login failed.", error);
-      } else {
-        $scope.loggedIn = true; //can use ngIf to show task/complete tasks
-        console.log("Authenticated successfully with payload:", authData);
-      }
+    $scope.message = null;
+    $scope.error = null;
+
+    $scope.authObj.$authWithPassword({
+      email: $scope.email,
+      password: $scope.password
+    }).then(function(authData) {
+      console.log("Logged in as:", authData.uid);
+      $scope.loggedIn = true;
+    }).catch(function(error) {
+      console.error("Authentication failed:", error);
     });
   }
 
+  $scope.logout = function() {
+    ref.unauth();
+  };
+  
 }]);
+
+
 
 
 

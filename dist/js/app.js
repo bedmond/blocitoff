@@ -48,7 +48,12 @@ blocitoff.config(['$stateProvider', '$locationProvider', function($stateProvider
   $stateProvider.state('complete', {
     url: '/complete',
     controller: 'Complete.controller',
-    templateUrl: '/templates/complete.html'
+    templateUrl: '/templates/complete.html',
+    resolve: {
+      "currentAuth": ['Auth', function(Auth) {
+        return Auth.$requireAuth();
+      }]
+    }
   });
 
 }]);
@@ -140,14 +145,12 @@ blocitoff.controller('Register.controller', ['$scope', '$firebaseArray', 'Auth',
 //login controller
 blocitoff.controller('Login.controller', ['$scope', '$firebaseArray', '$firebaseAuth', 'FIREBASE_URL', 'currentAuth', 'Auth', function($scope, $firebaseArray, $firebaseAuth, FIREBASE_URL, currentAuth, Auth) {
 
+  //keeps state unaccessible until login
   $scope.auth = Auth;
 
   $scope.auth.$onAuth(function(authData) {
     $scope.authData = authData;
-    console.log(authData);
   });
-
-  console.log(Auth);
 
   var ref = new Firebase(FIREBASE_URL);
   $scope.authObj = $firebaseAuth(ref);
@@ -161,7 +164,6 @@ blocitoff.controller('Login.controller', ['$scope', '$firebaseArray', '$firebase
       password: $scope.password
     }).then(function(authData) {
       console.log("Logged in as:", authData.uid);
-      $scope.loggedIn = true;
     }).catch(function(error) {
       console.error("Authentication failed:", error);
     });

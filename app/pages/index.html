@@ -21,9 +21,9 @@
                 <li role="presentation"><a ui-sref='register'>Register</a></li>
                 <li role="presentation"><a ui-sref='login'>Login</a></li>
                 <li role="presentation"><a ng-hide="authData" ui-sref='home'>Tasks</a></li>
-                <li role="presentation"><a ui-sref='complete'>Completed Tasks</a></li>
+                <li role="presentation"><a ng-hide="authData" ui-sref='complete'>Completed Tasks</a></li>
             </ul>
-        </nav> 
+        </nav>
         <div ui-view></div>
     </body>
 </html>

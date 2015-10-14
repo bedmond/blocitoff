@@ -12,17 +12,11 @@
             <label class="sr-only" for="password">Password</label>
               <input ng-model="password" type="password" class="form-control" id="passwordInput" placeholder="Password">
           </div>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox"> Remember me
-              </label>
-            </div>
           <button type="submit" class="btn btn-info" ng-click="login()">Sign in</button>
           <button type="submit" class="btn btn-warning" ng-click="logout()">Sign out</button>
         </form>
-        <p>{{ authData }}</p>
-        <p ng-show="authData">I am logged in!</p>
-        <p ng-hide="authData">No one is logged in!</p>
+        <h5><p ng-show="authData">Signed in.</p><h5>
+        <h5><p ng-hide="authData">Signed out.</p><h5>
     </div>
   </div>
 </div>
